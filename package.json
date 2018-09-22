@@ -1,0 +1,21 @@
+{
+  "name": "search_API_Node",
+  "version": "1.0.0",
+  "description": "A REST API to search for managers",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test",
+    "start": "nodemon server.js"
+  },
+  "author": "Eylül Dicle Yurdakul",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.17.5"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "request": "^2.87.0"
+  }
+}

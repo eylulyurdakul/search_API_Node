@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Managers</title>
+        <h1>Search managers here:</h1>
+        <link href="/styles/index.css" rel="stylesheet" type="text/css">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="environment">
+            <input id="managerSearch" placeholder="Type a name or email...">
+            <div id="managerResults"></div>
+            <p></p>
+        </div>
+        <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script>
+            let parametersForServer,
+                managersOnCurrentPage = [],
+                totalPages = 0,
+                listPerPage,
+                itemPerList,
+                button;
+
+            $(function(){
+                $("#managerSearch").focus();
+                $("#managerSearch").keyup(function(){
+                    $("managerResults").innerHTML = "";
+                    $("ul").remove();
+                    $("button").remove();
+                    parametersForServer = {
+                        search: $(this).val(),
+                        command: "searching",
+                        pageNum: 0
+                    };
+                    $.get( '/', parametersForServer, function(data) {
+                        $("managerResults").innerHTML = "";
+                        $("ul").remove();
+                        $("button").remove();
+                        managersOnCurrentPage = data[0];
+                        totalPages = data[1];
+                        listPerPage = $('<ul></ul>');
+                        for(let i = 0; i < managersOnCurrentPage.length; i++) {
+                            itemPerList = $('<li></li>');
+                            itemPerList.append(managersOnCurrentPage[i]);
+                            listPerPage.append(itemPerList);
+                        }
+                        for(let currentPage = 1; currentPage <= totalPages; currentPage++) {
+                            button = $('<button/>', {
+                                text: currentPage,
+                                id: "b_" + currentPage,
+                                click: function () {
+                                    console.log(currentPage);
+                                    parametersForServer = {
+                                        search: $(this).val(),
+                                        command: "paging",
+                                        pageNum: currentPage-1,
+                                    };
+                                    $.get( '/', parametersForServer, function(data) {
+                                        $("managerResults").innerHTML = "";
+                                        $("ul").remove();
+                                        totalPages = data[1];
+                                        if (totalPages > -1) {
+                                            listPerPage = $('<ul></ul>');
+                                            managersOnCurrentPage = data[0];
+                                            for(let i = 0; i < managersOnCurrentPage.length; i++) {
+                                                itemPerList = $('<li></li>');
+                                                itemPerList.append(managersOnCurrentPage[i]);
+                                                listPerPage.append(itemPerList);
+                                            }
+                                            $("#managerResults").html(listPerPage);
+                                        }
+                                    });
+                                },
+                            });
+                            $('#environment').children().append(button).end();
+                        }
+                        $("#managerResults").html(listPerPage);
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
